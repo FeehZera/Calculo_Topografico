@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <meta charset="UTF-8">
+  <title>Mapa Topográfico - Corte/Aterro</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 30px;}
+    table { border-collapse: collapse; width: 80%; margin: 30px 0;}
+    th, td { border: 1px solid #aaa; padding: 8px 12px; text-align: center; }
+    th { background: #F8F8F8; }
+    .corte { background: #ffcccc; }
+    .aterro { background: #cce7ff; }
+    .ok { background: #ccffcc; }
+  </style>
+</head>
+<body>
+
+<h2>Visualização do Terreno e Cálculo Automático de Corte/Aterro</h2>
+<div id="plot" style="width: 90vw; max-width:1200px; height: 600px;"></div>
+<h3>Tabela de Resultados</h3>
+<div id="result-table"></div>
+
+<script>
+  // ENTRADAS: Mantendo SEUS ARRAYS padrão (30 pontos, pode ajustar!)
+  const x = [0, 10, 20, 30, 40, 0, 10, 20, 30, 40, 0, 10, 20, 30, 40, 0, 10, 20, 30, 40, 0, 10, 20, 30, 40, 0, 10, 20, 30, 40];
+  const y = [0, 0, 0, 0, 0, 10, 10, 10, 10, 10, 20, 20, 20, 20, 20, 30, 30, 30, 30, 30, 40, 40, 40, 40, 40, 50, 50, 50, 50, 50];
+  const z = [100, 102, 104, 101, 98, 99, 100, 103, 100, 96, 97, 99, 100, 101, 98, 96, 97, 98, 99, 97, 96, 97, 99, 100, 101, 96, 97, 99, 100, 101];
+  
+  // CONFIGURAÇÃO: Cota de projeto padrão (MESMA PRA TODOS, AJUSTE SE QUISER)
+  const cotaProjeto = 100; // você pode virar um array se quiser cotas diferentes para cada ponto
+  
+  // Supondo malha uniforme, cada ponto representa (10m x 10m)
+  const areaPorPonto = 100; // m²
+  
+  // CÁLCULO
+  let resultados = [];
+  for(let i = 0; i < x.length; i++) {
+    let diferenca = cotaProjeto - z[i];
+    let corte = 0, aterro = 0, tipo = "";
+    if(diferenca < 0) {
+      corte = Math.abs(diferenca) * areaPorPonto; // vai tirar terra
+      tipo = "corte";
+    } else if(diferenca > 0) {
+      aterro = diferenca * areaPorPonto; // vai colocar terra
+      tipo = "aterro";
+    } else {
+      tipo = "ok";
+    }
+    resultados.push({
+      ponto: i+1,
+      x: x[i],
+      y: y[i],
+      cotaMedida: z[i],
+      cotaProjeto,
+      diferenca,
+      corte: corte.toFixed(2),
+      aterro: aterro.toFixed(2),
+      tipo
+    });
+  }
+  
+  // GERA TABELA HTML
+  let tabela = `<table>
+    <tr>
+      <th>Ponto</th>
+      <th>X</th>
+      <th>Y</th>
+      <th>Cota Medida</th>
+      <th>Cota Projeto</th>
+      <th>Diferença</th>
+      <th>Corte (m³)</th>
+      <th>Aterro (m³)</th>
+    </tr>`;
+  resultados.forEach(r => {
+    tabela += `<tr class="${r.tipo}">
+      <td>${r.ponto}</td>
+      <td>${r.x}</td>
+      <td>${r.y}</td>
+      <td>${r.cotaMedida}</td>
+      <td>${r.cotaProjeto}</td>
+      <td>${r.diferenca.toFixed(2)}</td>
+      <td>${r.corte}</td>
+      <td>${r.aterro}</td>
+    </tr>`;
+  });
+  // Totais
+  const totalCorte = resultados.reduce((acc, cur) => acc + Number(cur.corte), 0).toFixed(2);
+  const totalAterro = resultados.reduce((acc, cur) => acc + Number(cur.aterro), 0).toFixed(2);
+  tabela += `<tr style="font-weight:bold;">
+    <td colspan="6">Totais</td>
+    <td>${totalCorte} m³</td>
+    <td>${totalAterro} m³</td>
+  </tr>`;
+  tabela += `</table>`;
+  document.getElementById('result-table').innerHTML = tabela;
+  
+  // PLOTLY - COLORINDO OS PONTOS por CORTE/ATERRO
+  // Scatter para marcar os pontos no mesh
+  const scatter = {
+    x: x,
+    y: y,
+    z: z,
+    mode: 'markers',
+    type: 'scatter3d',
+    marker: {
+      size: 6,
+      color: resultados.map(r => r.tipo === "corte" ? 'red' : (r.tipo === "aterro" ? 'blue' : 'green')),
+      opacity: 0.7,
+      line: { width: 2, color: 'gray' }
+    },
+    name: 'Pontos (Corte/Aterro/OK)'
+  };
+  
+  // Mesh do terreno (visual base)
+  const mesh = {
+    x: x,
+    y: y,
+    z: z,
+    type: 'mesh3d',
+    intensity: z,
+    colorscale: 'Viridis',
+    opacity: 1,
+    colorbar: { title: 'Cota (m)' }
+  };
+  
+  // Plano da cota de projeto (verde)
+  const plano = {
+  type: 'mesh3d',
+  x: [
+    Math.min(...x), Math.max(...x), Math.max(...x), Math.min(...x)
+  ],
+  y: [
+    Math.min(...y), Math.min(...y), Math.max(...y), Math.max(...y)
+  ],
+  z: [
+    cotaProjeto, cotaProjeto, cotaProjeto, cotaProjeto
+  ],
+  i: [0, 1, 2, 0],
+  j: [1, 2, 3, 3],
+  k: [2, 3, 0, 1],
+  color: 'green',
+  opacity: 1,
+  name: 'Plano de Cota 100',
+  showscale: false
+};
+
+  const data = [mesh, plano, scatter];
+
+  const layout = {
+    title: 'Mapa 3D do Terreno com Corte/Aterro',
+    scene: {
+      xaxis: { title: 'X (m)' },
+      yaxis: { title: 'Y (m)' },
+      zaxis: { title: 'Cota (m)', range: [Math.min(...z, cotaProjeto)-5, Math.max(...z, cotaProjeto)+5] }
+    },
+    margin: { t: 50 }
+  };
+
+  Plotly.newPlot('plot', data, layout);
+
+</script>
+</body>
+</html>
