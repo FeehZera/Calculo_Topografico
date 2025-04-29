@@ -1,37 +1,37 @@
 body {
-    background-color: #2e2e2e;
-    font-family: Arial, sans-serif;
-    margin: 30px;
-  }
-  
-  table {
-    border-collapse: collapse;
-    width: 80%;
-    margin: 30px 0;
-  }
-  
-  th, td {
-    border: 1px solid #aaa;
-    padding: 8px 12px;
-    text-align: center;
-  }
-  
-  th {
-    background: #F8F8F8;
-  }
-  
-  .corte {
-    background: #ffcccc;
-  }
-  
-  .aterro {
-    background: #cce7ff;
-  }
-  
-  .ok {
-    background: #ccffcc;
-  }
-  #ploty{
-    text-align: center;
-    align-items: center;
-  }
+  background-color: #2e2e2e;
+  font-family: Arial, sans-serif;
+}
+
+table {
+  border-collapse: collapse;
+  width: 80%;
+  margin: 30px 0;
+}
+
+th,
+td {
+  border: 1px solid #aaa;
+  padding: 8px 12px;
+  text-align: center;
+}
+
+th {
+  background: #F8F8F8;
+}
+
+.corte {
+  background: #ffcccc;
+}
+
+.aterro {
+  background: #cce7ff;
+}
+
+.ok {
+  background: #ccffcc;
+}
+
+#central {
+  text-align: center;
+}
