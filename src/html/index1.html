@@ -1,69 +1,67 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-  <meta charset="UTF-8">
-  <title>Mapa Topográfico 2D</title>
-</head>
-<body> 
-  <div id="plot" style="width: 100%; height: 800px;"></div>
-
-
-
-  <script>
-    // Dados topográficos (20 pontos)
-    const x = [0, 10, 20, 30, 40, 0, 10, 20, 30, 40, 0, 10, 20, 30, 40, 0, 10, 20, 30, 40, 0, 10, 20, 30, 40, 0, 10, 20, 30, 40];
-    const y = [0, 0, 0, 0, 0, 10, 10, 10, 10, 10, 20, 20, 20, 20, 20, 30, 30, 30, 30, 30, 40, 40, 40, 40, 40, 50, 50, 50, 50, 50];
-    const z = [100, 102, 104, 101, 98, 99, 100, 103, 100, 96, 97, 99, 100, 101, 98, 96, 97, 98, 99, 97, 96, 97, 99, 100, 101, 96, 97, 99, 100, 101];
-    //const z = [100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100];
-
-    const data = [{
-      x: x,
-      y: y,
-      z: z,
-      type: 'mesh3d', //mesh3d / heatmap / surface / contour / scatter3d
-      intensity: z,
-      colorscale: 'Viridis', 
-      contours: {
-        coloring: 'white',
-        showlabels: true
-      },
-      colorbar: {
-        title: 'Cota (m)'
-      },
-      //MACAQUICE
-      
-    }];
-
-    const layout = {
-      title: 'TESTEEEEEEEEEEEE Mapa 2D do Terreno com 20 pontos',
-      xaxis: { title: 'X (m)' },
-      yaxis: { title: 'Y (m)' },
-      zaxis: { title: 'z (m)' },
-    };
-
-    // Plano da cota de projeto (cinza claro)
-  const plano = {
-  type: 'mesh3d',
-  x: [
-    Math.min(...x), Math.max(...x), Math.max(...x), Math.min(...x)
-  ],
-  y: [
-    Math.min(...y), Math.min(...y), Math.max(...y), Math.max(...y)
-  ],
-  z: [
-    cotaProjeto, cotaProjeto, cotaProjeto, cotaProjeto
-  ],
-  i: [0, 1, 2, 0],
-  j: [1, 2, 3, 3],
-  k: [2, 3, 0, 1],
-  color: 'with',
-  opacity: 0.3,
-  name: 'Plano de Cota 100',
-  showscale: false
-};
-
-    Plotly.newPlot('plot', data, plano, layout);
-  </script>
-</body>
+  <head>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <meta charset="UTF-8">
+    <title>Mapa Topográfico 2D</title>
+  </head>
+  <body>
+    <div id="plot" style="width: 100%; height: 800px;"></div>
+    <script>
+      // Dados topográficos (20 pontos)
+      const x = [0, 10, 20, 30, 40, 0, 10, 20, 30, 40, 0, 10, 20, 30, 40, 0, 10, 20, 30, 40, 0, 10, 20, 30, 40, 0, 10, 20, 30, 40];
+      const y = [0, 0, 0, 0, 0, 10, 10, 10, 10, 10, 20, 20, 20, 20, 20, 30, 30, 30, 30, 30, 40, 40, 40, 40, 40, 50, 50, 50, 50, 50];
+      const z = [100, 102, 104, 101, 98, 99, 100, 103, 100, 96, 97, 99, 100, 101, 98, 96, 97, 98, 99, 97, 96, 97, 99, 100, 101, 96, 97, 99, 100, 101];
+      //const z = [100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100];
+      const data = [{
+        x: x,
+        y: y,
+        z: z,
+        type: 'mesh3d', //mesh3d / heatmap / surface / contour / scatter3d
+        intensity: z,
+        colorscale: 'Viridis',
+        contours: {
+          coloring: 'white',
+          showlabels: true
+        },
+        colorbar: {
+          title: 'Cota (m)'
+        },
+        //MACAQUICE
+      }];
+      const layout = {
+        title: 'TESTEEEEEEEEEEEE Mapa 2D do Terreno com 20 pontos',
+        xaxis: {
+          title: 'X (m)'
+        },
+        yaxis: {
+          title: 'Y (m)'
+        },
+        zaxis: {
+          title: 'z (m)'
+        },
+      };
+      // Plano da cota de projeto (cinza claro)
+      const plano = {
+        type: 'mesh3d',
+        x: [
+          Math.min(...x), Math.max(...x), Math.max(...x), Math.min(...x)
+        ],
+        y: [
+          Math.min(...y), Math.min(...y), Math.max(...y), Math.max(...y)
+        ],
+        z: [
+          cotaProjeto, cotaProjeto, cotaProjeto, cotaProjeto
+        ],
+        i: [0, 1, 2, 0],
+        j: [1, 2, 3, 3],
+        k: [2, 3, 0, 1],
+        color: 'with',
+        opacity: 0.3,
+        name: 'Plano de Cota 100',
+        showscale: false
+      };
+      Plotly.newPlot('plot', data, plano, layout);
+    </script>
+  </body>
 </html>

@@ -9,7 +9,9 @@ let resultados = [];
 
 for (let i = 0; i < x.length; i++) {
   let diferenca = cotaProjeto - z[i];
-  let corte = 0, aterro = 0, tipo = "";
+  let corte = 0,
+    aterro = 0,
+    tipo = "";
   if (diferenca < 0) {
     corte = Math.abs(diferenca) * areaPorPonto;
     tipo = "corte";
@@ -77,7 +79,10 @@ const scatter = {
     size: 6,
     color: resultados.map(r => r.tipo === "corte" ? 'red' : (r.tipo === "aterro" ? 'blue' : 'green')),
     opacity: 0.7,
-    line: { width: 2, color: 'gray' }
+    line: {
+      width: 2,
+      color: 'gray'
+    }
   },
   name: 'Pontos (Corte/Aterro/OK)'
 };
@@ -90,7 +95,9 @@ const mesh = {
   intensity: z,
   colorscale: 'Viridis',
   opacity: 1,
-  colorbar: { title: 'Cota (m)' }
+  colorbar: {
+    title: 'Cota (m)'
+  }
 };
 
 const plano = {
@@ -113,12 +120,21 @@ const data = [mesh, plano, scatter];
 const layout = {
   title: 'Mapa 3D do Terreno com Corte/Aterro',
   scene: {
-    xaxis: { title: 'X (m)' },
-    yaxis: { title: 'Y (m)' },
-    zaxis: { title: 'Cota (m)', range: [Math.min(...z, cotaProjeto) - 5, Math.max(...z, cotaProjeto) + 5] },
+    xaxis: {
+      title: 'X (m)'
+    },
+    yaxis: {
+      title: 'Y (m)'
+    },
+    zaxis: {
+      title: 'Cota (m)',
+      range: [Math.min(...z, cotaProjeto) - 5, Math.max(...z, cotaProjeto) + 5]
+    },
     aspectmode: 'data' // mantém proporção real entre os eixos
   },
-  margin: { t: 50 }
+  margin: {
+    t: 50
+  }
 };
 
 Plotly.newPlot('plot', data, layout);
