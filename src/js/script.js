@@ -118,7 +118,7 @@ const plano = {
 const data = [mesh, plano, scatter];
 
 const layout = {
-  title: 'Mapa 3D do Terreno com Corte/Aterro',
+  //title: 'Mapa 3D do Terreno com Corte/Aterro',
   scene: {
     xaxis: {
       title: 'X (m)'
