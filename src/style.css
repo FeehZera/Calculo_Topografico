@@ -1,0 +1,155 @@
+:root {
+  --primary-color: #4361ee;
+  --secondary-color: #3a0ca3;
+  --danger-color: #f72585;
+  --success-color: #4cc9f0;
+  --dark-color: #1a1a2e;
+  --light-color: #f8f9fa;
+  --glass-effect: rgba(255, 255, 255, 0.1);
+  --transition-speed: 0.3s;
+}
+
+body {
+  background: linear-gradient(135deg, #16213e 0%, #0f3460 100%);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: var(--light-color);
+  min-height: 100vh;
+  margin: 0;
+  padding: 20px;
+  background-attachment: fixed;
+}
+
+h2,
+h3 {
+  color: white;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  margin-bottom: 1.5rem;
+  position: relative;
+  display: inline-block;
+}
+
+h2::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: var(--primary-color);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--transition-speed) ease-out;
+}
+
+h2:hover::after {
+  transform: scaleX(1);
+}
+
+#central {
+  background: var(--glass-effect);
+  backdrop-filter: blur(10px);
+  border-radius: 15px;
+  padding: 2rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  max-width: 1400px;
+  margin: 0 auto;
+  transition: all var(--transition-speed) ease;
+}
+
+#central:hover {
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+}
+
+button,
+.btn {
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all var(--transition-speed);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+button:hover,
+.btn:hover {
+  background: var(--secondary-color);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 2rem 0;
+  overflow: hidden;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  animation: fadeIn 0.5s ease-out;
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+th,
+td {
+  padding: 12px 15px;
+  text-align: center;
+  border: none;
+}
+
+th {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+tr:nth-child(even) {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+input[type="number"] {
+  width: 80px;
+  padding: 5px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+<!-- -->
+#plot {
+  text-align: center;
+  margin: auto;
+  display: block;
+  max-width: 100%;
+  width: 90vw;
+  height: 500px;
+  border-radius: 100%;
+}
+#plotdiv{
+  border-radius: 100%;
+}
+
+.linha-aterro {
+  background-color: rgba(0, 255, 0, 0.2);
+}
+
+.linha-corte {
+  background-color: rgba(255, 0, 0, 0.2);
+}
+#graficoTipo {
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all var(--transition-speed);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+#excluirln{
+  background-color: red;
+}
+#inputcsv{
+  width: 100px;
+  width: 10;
+  margin: auto;
+  background-color: red;
+}
