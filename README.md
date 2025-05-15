@@ -73,6 +73,12 @@
         <sub><b>ezequielmdev</b></sub>
       </a>
     </td>
+    <td align="center">
+      <a href="https://github.com/JesseCappeletti">
+        <img src="https://github.com/JesseCappeletti.png" width="100px;" alt="JesseCappeletti"/><br />
+        <sub><b>JesseCappeletti</b></sub>
+      </a>
+    </td>
   </tr>
 </table>
 
