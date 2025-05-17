@@ -113,17 +113,17 @@ input[type="number"] {
   border-radius: 5px;
   border: 1px solid #ccc;
 }
-<!-- -->
+
 #plot {
   text-align: center;
   margin: auto;
   display: block;
   max-width: 100%;
   width: 90vw;
-  height: 500px;
-  border-radius: 100%;
+  border-radius: 100px;
 }
-#plotdiv{
+
+#plotdiv {
   border-radius: 100%;
 }
 
@@ -134,6 +134,7 @@ input[type="number"] {
 .linha-corte {
   background-color: rgba(255, 0, 0, 0.2);
 }
+
 #graficoTipo {
   background: var(--primary-color);
   color: white;
@@ -144,15 +145,18 @@ input[type="number"] {
   transition: all var(--transition-speed);
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
-#excluirln{
+
+#excluirln {
   background-color: red;
 }
-#inputcsv{
+
+#inputcsv {
   width: 100px;
   width: 10;
   margin: auto;
   background-color: red;
 }
+
 #nivelCota {
   background: var(--primary-color);
   color: white;

@@ -67,7 +67,7 @@ function gerarGrafico() {
         j: [1, 2, 3, 3],
         k: [2, 3, 0, 1],
         color: 'red',
-        opacity: 0.3,
+        opacity: 1,
         name: 'Plano de Cota 100',
         showscale: false
     };
@@ -82,11 +82,7 @@ function gerarGrafico() {
             z: z,
             type: 'mesh3d',
             intensity: z,
-            colorscale: 'Viridis',
-            //====================================================================
-
-
-
+            colorscale: 'Earth'
         }, plano];
     } else if (tipoGrafico === 'scatter3d') {
         data = [{
@@ -95,17 +91,64 @@ function gerarGrafico() {
             z: z,
             type: 'scatter3d',
             mode: 'markers',
-            marker: { size: 5, color: z, colorscale: 'Viridis' },
+            marker: { size: 5, color: z, colorscale: 'Earth' }
         }, plano];
     } else if (tipoGrafico === 'heatmap') {
+        const gridSize = 50;
+        const minX = Math.min(...x), maxX = Math.max(...x);
+        const minY = Math.min(...y), maxY = Math.max(...y);
+        const stepX = (maxX - minX) / gridSize;
+        const stepY = (maxY - minY) / gridSize;
+
+        // Criação dos vetores de grade
+        const xi = Array.from({ length: gridSize + 1 }, (_, i) => minX + i * stepX);
+        const yi = Array.from({ length: gridSize + 1 }, (_, i) => minY + i * stepY);
+
+        // Interpolação para gerar a grade zi
+        const zi = yi.map(yVal => {
+            return xi.map(xVal => {
+                let somaPesos = 0;
+                let somaZ = 0;
+                for (let i = 0; i < x.length; i++) {
+                    const dx = x[i] - xVal;
+                    const dy = y[i] - yVal;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    const peso = 1 / (dist + 0.0001); // peso baseado em distância
+                    somaPesos += peso;
+                    somaZ += z[i] * peso;
+                }
+                return somaZ / somaPesos;
+            });
+        });
+
         data = [{
-            x: x,
-            y: y,
-            z: z,
-            type: 'heatmap',
-            colorscale: 'Viridis',
-            intensity: z,
-            colorbar: { title: 'Cota (m)' },
+            type: 'contour',
+            x: xi,
+            y: yi,
+            z: zi,
+            colorscale: 'Earth',
+            contours: {
+                coloring: 'heatmap',
+                showlabels: true,
+                labelfont: {
+                    size: 12,
+                    color: '#000000',  // ✅ preto puro nos números
+                    family: 'Arial Black, sans-serif'
+                }
+            },
+            line: {
+                color: '#000000',  // ✅ preto puro nas linhas
+                width: 2
+            },
+            colorbar: {
+                title: 'Cota (m)',
+                tickfont: {
+                    color: '#000000'
+                },
+                titlefont: {
+                    color: '#000000'
+                }
+            }
         }];
     }
 
@@ -124,9 +167,9 @@ function gerarGrafico() {
             }
         }
     }
-//===================================================================
+    //===================================================================
     Plotly.newPlot('plot', data, layout);
-//===================================================================
+    //===================================================================
 
     let tabela = `<table>
     <tr>
