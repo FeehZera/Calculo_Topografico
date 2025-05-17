@@ -153,3 +153,13 @@ input[type="number"] {
   margin: auto;
   background-color: red;
 }
+#nivelCota {
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all var(--transition-speed);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}

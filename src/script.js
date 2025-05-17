@@ -25,11 +25,18 @@ function removerLinha(botao) {
     atualizarRotuloPontos();
     gerarGrafico();  // Atualiza o gráfico e a tabela
 }
+//===============================================================================================
+let cotaProjeto = 100;
+function adicionarCota(value) {
+    cotaProjeto = Number(value);
+}
 
 function gerarGrafico() {
     const x = [], y = [], z = [], resultados = [];
     const linhas = document.querySelectorAll("#input-table tbody tr");
-    const cotaProjeto = 100;
+
+
+
 
     linhas.forEach((linha, i) => {
         const entradas = linha.querySelectorAll("input");
@@ -76,7 +83,10 @@ function gerarGrafico() {
             type: 'mesh3d',
             intensity: z,
             colorscale: 'Viridis',
-            showscale: false
+            //====================================================================
+
+
+
         }, plano];
     } else if (tipoGrafico === 'scatter3d') {
         data = [{
@@ -86,7 +96,6 @@ function gerarGrafico() {
             type: 'scatter3d',
             mode: 'markers',
             marker: { size: 5, color: z, colorscale: 'Viridis' },
-            showscale: false
         }, plano];
     } else if (tipoGrafico === 'heatmap') {
         data = [{
@@ -97,18 +106,27 @@ function gerarGrafico() {
             colorscale: 'Viridis',
             intensity: z,
             colorbar: { title: 'Cota (m)' },
-            showscale: false
         }];
     }
 
-    Plotly.newPlot('plot', data, {
+    const layout = {
         title: 'Mapa Topográfico',
         scene: {
-            xaxis: { title: 'X (m)' },
-            yaxis: { title: 'Y (m)' },
-            zaxis: { title: 'Cota (m)' }
+            aspectmode: 'manual',
+            aspectratio: {
+                x: 15, //largura
+                y: 15, //profundidade
+                z: 2, //altura
+                pixelRatio: 5,
+                xaxis: { title: 'X (m)' },
+                yaxis: { title: 'Y (m)' },
+                zaxis: { title: 'Cota (m)' },
+            }
         }
-    });
+    }
+//===================================================================
+    Plotly.newPlot('plot', data, layout);
+//===================================================================
 
     let tabela = `<table>
     <tr>
