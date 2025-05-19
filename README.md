@@ -79,6 +79,12 @@
         <sub><b>JesseCappeletti</b></sub>
       </a>
     </td>
+    <td align="center">
+      <a href="https://github.com/alonsowi">
+        <img src="https://github.com/alonsowi.png" width="100px;" alt="alonsowi"/><br />
+        <sub><b>alonsowi</b></sub>
+      </a>
+    </td>
   </tr>
 </table>
 
