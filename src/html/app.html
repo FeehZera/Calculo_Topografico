@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mapa Topográfico - Corte/Aterro</title>
+    <link rel="stylesheet" href="../styles/style.css" />
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/exceljs/dist/exceljs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+</head>
+
+<body>
+    <h2 class="titulo-animado">Visualização do Terreno e Cálculo Automático de Corte/Aterro</h2>
+    <div id="central">
+        <!--Aqui vai a div do csv/xlsx-->
+
+        <div id="inputcsv">
+            <div style="width: 700px;">
+                <label for="quantiPontos">Quantidade:</label>
+                <input type="number" id="quantiPontos" value="3" step="1" min="3">
+            </div>
+            <button onclick="exportarXLSX()">Gerar Tabela</button>
+        </div>
+
+        <div id="dropzone">
+            <p>Arraste e solte seu arquivo aqui, ou clique para selecionar</p>
+            <input type="file" id="fileInput" style="display:none">
+        </div>
+
+
+
+        <h3>Entrar com Coordenadas</h3>
+        <table id="input-table">
+            <thead>
+                <tr>
+                    <th>Ponto</th>
+                    <th>Posição X</th>
+                    <th>Posição Y</th>
+                    <th>Z (Cota Medida)</th>
+                    <th>Ação</th>
+                </tr>
+            </thead>
+            <tbody><!--
+                <tr>
+                    <td class="ponto-label">P1</td>
+                    <td><input type="number" value="0"></td>
+                    <td><input type="number" value="0"></td>
+                    <td><input type="number" value="101"></td>
+                    <td><button onclick="removerLinha(this)" id="excluirln">Excluir</button></td>
+                </tr>
+                <tr>
+                    <td class="ponto-label">P2</td>
+                    <td><input type="number" value="10"></td>
+                    <td><input type="number" value="0"></td>
+                    <td><input type="number" value="99"></td>
+                    <td><button onclick="removerLinha(this)" id="excluirln">Excluir</button></td>
+                </tr>
+
+                
+                <tr>
+                    <td class="ponto-label">P3</td>
+                    <td><input type="number" value="20"></td>
+                    <td><input type="number" value="0"></td>
+                    <td><input type="number" value="100"></td>
+                    <td><button onclick="removerLinha(this)" id="excluirln">Excluir</button></td>
+                </tr>
+                <tr>
+                    <td class="ponto-label">P4</td>
+                    <td><input type="number" value="30"></td>
+                    <td><input type="number" value="0"></td>
+                    <td><input type="number" value="101"></td>
+                    <td><button onclick="removerLinha(this)" id="excluirln">Excluir</button></td>
+                </tr>
+                <tr>
+                    <td class="ponto-label">P5</td>
+                    <td><input type="number" value="40"></td>
+                    <td><input type="number" value="0"></td>
+                    <td><input type="number" value="100"></td>
+                    <td><button onclick="removerLinha(this)" id="excluirln">Excluir</button></td>
+                </tr>
+                <tr>
+                    <td class="ponto-label">P6</td>
+                    <td><input type="number" value="0"></td>
+                    <td><input type="number" value="10"></td>
+                    <td><input type="number" value="101"></td>
+                    <td><button onclick="removerLinha(this)" id="excluirln">Excluir</button></td>
+                </tr>
+                <tr>
+                    <td class="ponto-label">P7</td>
+                    <td><input type="number" value="10"></td>
+                    <td><input type="number" value="10"></td>
+                    <td><input type="number" value="99"></td>
+                    <td><button onclick="removerLinha(this)" id="excluirln">Excluir</button></td>
+                </tr>
+                <tr>
+                    <td class="ponto-label">P8</td>
+                    <td><input type="number" value="20"></td>
+                    <td><input type="number" value="10"></td>
+                    <td><input type="number" value="97"></td>
+                    <td><button onclick="removerLinha(this)" id="excluirln">Excluir</button></td>
+                </tr>
+                <tr>
+                    <td class="ponto-label">P9</td>
+                    <td><input type="number" value="30"></td>
+                    <td><input type="number" value="10"></td>
+                    <td><input type="number" value="98"></td>
+                    <td><button onclick="removerLinha(this)" id="excluirln">Excluir</button></td>
+                </tr>
+                <tr>
+                    <td class="ponto-label">P10</td>
+                    <td><input type="number" value="40"></td>
+                    <td><input type="number" value="10"></td>
+                    <td><input type="number" value="103"></td>
+                    <td><button onclick="removerLinha(this)" id="excluirln">Excluir</button></td>
+                </tr>
+                <tr>
+                    <td class="ponto-label">P11</td>
+                    <td><input type="number" value="0"></td>
+                    <td><input type="number" value="20"></td>
+                    <td><input type="number" value="105"></td>
+                    <td><button onclick="removerLinha(this)" id="excluirln">Excluir</button></td>
+                </tr>
+                <tr>
+                    <td class="ponto-label">P12</td>
+                    <td><input type="number" value="10"></td>
+                    <td><input type="number" value="20"></td>
+                    <td><input type="number" value="100"></td>
+                    <td><button onclick="removerLinha(this)" id="excluirln">Excluir</button></td>
+                </tr>
+                <tr>
+                    <td class="ponto-label">P13</td>
+                    <td><input type="number" value="20"></td>
+                    <td><input type="number" value="20"></td>
+                    <td><input type="number" value="101"></td>
+                    <td><button onclick="removerLinha(this)" id="excluirln">Excluir</button></td>
+                </tr>
+                <tr>
+                    <td class="ponto-label">P14</td>
+                    <td><input type="number" value="30"></td>
+                    <td><input type="number" value="20"></td>
+                    <td><input type="number" value="102"></td>
+                    <td><button onclick="removerLinha(this)" id="excluirln">Excluir</button></td>
+                </tr>
+                <tr>
+                    <td class="ponto-label">P15</td>
+                    <td><input type="number" value="40"></td>
+                    <td><input type="number" value="20"></td>
+                    <td><input type="number" value="103"></td>
+                    <td><button onclick="removerLinha(this)" id="excluirln">Excluir</button></td>
+                </tr>
+                <tr>
+                    <td class="ponto-label">P16</td>
+                    <td><input type="number" value="0"></td>
+                    <td><input type="number" value="30"></td>
+                    <td><input type="number" value="98"></td>
+                    <td><button onclick="removerLinha(this)" id="excluirln">Excluir</button></td>
+                </tr>
+                <tr>
+                    <td class="ponto-label">P17</td>
+                    <td><input type="number" value="10"></td>
+                    <td><input type="number" value="30"></td>
+                    <td><input type="number" value="97"></td>
+                    <td><button onclick="removerLinha(this)" id="excluirln">Excluir</button></td>
+                </tr>
+                <tr>
+                    <td class="ponto-label">P18</td>
+                    <td><input type="number" value="20"></td>
+                    <td><input type="number" value="30"></td>
+                    <td><input type="number" value="100"></td>
+                    <td><button onclick="removerLinha(this)" id="excluirln">Excluir</button></td>
+                </tr>
+                <tr>
+                    <td class="ponto-label">P19</td>
+                    <td><input type="number" value="30"></td>
+                    <td><input type="number" value="30"></td>
+                    <td><input type="number" value="101"></td>
+                    <td><button onclick="removerLinha(this)" id="excluirln">Excluir</button></td>
+                </tr>
+                <tr>
+                    <td class="ponto-label">P20</td>
+                    <td><input type="number" value="40"></td>
+                    <td><input type="number" value="30"></td>
+                    <td><input type="number" value="98"></td>
+                    <td><button onclick="removerLinha(this)" id="excluirln">Excluir</button></td>
+                </tr>
+-->
+
+
+            </tbody>
+        </table>
+
+        <div style="text-align: center; margin: 1rem 0;">
+
+            <input type="number" id="nivelCota" value="100" onchange="adicionarCota(Number(this.value))">
+            <!--cota projeto-->
+            <button onclick="adicionarLinha()">Adicionar Ponto</button>
+            <button onclick="gerarGrafico()">Gerar Gráfico</button>
+            <button onclick="gerarTabelaDoArquivo()">Gerar Gráfico a partir do Arquivo</button>
+
+
+            <select id="graficoTipo" onchange="gerarGrafico()">
+                <option value="scatter3d">Scatter 3D</option>
+                <option value="mesh3d">Mesh 3D</option>
+                <option value="heatmap">Heatmap</option>
+            </select>
+        </div>
+
+        <div id="plotdiv">
+            <div id="plot"></div>
+        </div>
+        <div id="result-table"></div>
+    </div>
+
+    <script src="../scripts/script.js"></script>
+</body>
+
+</html>

@@ -167,3 +167,81 @@ input[type="number"] {
   transition: all var(--transition-speed);
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
+
+
+
+#inputcsv {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 20px 0;
+  padding: 16px 24px;
+  font-family: Arial, sans-serif;
+  background: var(--button-bg);
+  border-radius: 12px;
+  box-shadow: 0 6px 12px rgb(0 0 0 / 0.1);
+}
+
+#inputcsv > div {
+  width: 700px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+#inputcsv label {
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--neutral-color);
+  min-width: 100px;
+}
+
+#inputcsv input[type="number"] {
+  width: 80px;
+  padding: 5px 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+  transition: border-color var(--transition-speed);
+}
+
+#inputcsv input[type="number"]:focus {
+  border-color: var(--primary-color);
+  outline: none;
+}
+
+#inputcsv button,
+#inputcsv .btn {
+  background: var(--neutral-color);
+  color: white;
+  border: none;
+  padding: 12px 28px;   /* Aumentei para caber texto */
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all var(--transition-speed);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  font-size: 16px;
+  font-weight: 600;
+  white-space: nowrap; /* Evita quebra do texto */
+}
+
+#inputcsv button:hover,
+#inputcsv .btn:hover {
+  background: #333333;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+
+
+#dropzone {
+  border: 2px dashed #ccc;
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+#dropzone.dragover {
+  background-color: #f0f0f0;
+}

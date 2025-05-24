@@ -1,10 +1,127 @@
+//===============================================================================================
 function atualizarRotuloPontos() {
     const labels = document.querySelectorAll("#input-table tbody .ponto-label");
     labels.forEach((label, i) => {
         label.textContent = `P${i + 1}`;
     });
 }
+//===============================================================================================
+const dropzone = document.getElementById('dropzone');
+const fileInput = document.getElementById('fileInput');
 
+dropzone.addEventListener('click', () => fileInput.click());
+
+dropzone.addEventListener('dragover', (e) => {
+  e.preventDefault();
+  dropzone.classList.add('dragover');
+});
+
+dropzone.addEventListener('dragleave', () => {
+  dropzone.classList.remove('dragover');
+});
+
+dropzone.addEventListener('drop', (e) => {
+  e.preventDefault();
+  dropzone.classList.remove('dragover');
+  const file = e.dataTransfer.files[0];
+  processarArquivo(file);
+});
+
+fileInput.addEventListener('change', () => {
+  const file = fileInput.files[0];
+  processarArquivo(file);
+});
+
+//===============================================================================================
+function processarArquivo(file) {
+  if (!file) return;
+
+  const reader = new FileReader();
+
+  reader.onload = function(e) {
+    const data = new Uint8Array(e.target.result);
+    const workbook = XLSX.read(data, { type: 'array' });
+
+    const firstSheetName = workbook.SheetNames[0];
+    const worksheet = workbook.Sheets[firstSheetName];
+
+    const json = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+    
+
+    for (let i = 1; i < json.length; i++) {  // Pula o cabeçalho
+      x.push(parseFloat(json[i][1]) || 0);
+      y.push(parseFloat(json[i][2]) || 0);
+      z.push(parseFloat(json[i][3]) || 0);
+    }
+
+    console.log('Array X:', x);
+    console.log('Array Y:', y);
+    console.log('Array Z:', z);
+
+    // Aqui você pode fazer qualquer outra coisa com os arrays
+  };
+
+  reader.readAsArrayBuffer(file);
+}
+
+//===============================================================================================
+
+async function exportarXLSX() {
+    const qtd = Number(document.getElementById('quantiPontos').value);
+
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Pontos');
+
+    // Cabeçalho
+    worksheet.addRow(['Ponto', 'Eixo X', 'Eixo Y', 'Eixo Z']);
+
+    // Linhas de pontos
+    for (let i = 1; i <= qtd; i++) {
+        worksheet.addRow(['P' + i, '', '', '']);
+    }
+
+    // Centralizar tudo + cabeçalho em negrito
+    worksheet.eachRow((row, rowNumber) => {
+        row.eachCell((cell) => {
+            cell.alignment = { vertical: 'middle', horizontal: 'center' };
+            if (rowNumber === 1) {
+                cell.font = { bold: true };
+            }
+            // (Opcional) bordas:
+            cell.border = {
+                top: { style: 'thin' },
+                left: { style: 'thin' },
+                bottom: { style: 'thin' },
+                right: { style: 'thin' }
+            };
+        });
+    });
+
+    // Ajuste de largura automática
+    worksheet.columns.forEach(column => {
+        let maxLength = 10;
+        column.eachCell({ includeEmpty: true }, cell => {
+            const value = cell.value ? cell.value.toString() : "";
+            if (value.length > maxLength) {
+                maxLength = value.length;
+            }
+        });
+        column.width = maxLength + 2;
+    });
+
+    const buffer = await workbook.xlsx.writeBuffer();
+    const blob = new Blob([buffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "tabela_de_pontos.xlsx";
+    a.click();
+
+    URL.revokeObjectURL(url);
+}
+//==============================================================================================
 function adicionarLinha() {
     const tbody = document.querySelector("#input-table tbody");
     const novaLinha = document.createElement("tr");
@@ -26,17 +143,23 @@ function removerLinha(botao) {
     gerarGrafico();  // Atualiza o gráfico e a tabela
 }
 //===============================================================================================
+
+
+//===============================================================================================
 let cotaProjeto = 100;
+let x = [], y = [], z = [];
+
+//===============================================================================================
+
 function adicionarCota(value) {
     cotaProjeto = Number(value);
 }
 
+//===============================================================================================
+
 function gerarGrafico() {
-    const x = [], y = [], z = [], resultados = [];
+    let x = [], y = [], z = [], resultados = [];
     const linhas = document.querySelectorAll("#input-table tbody tr");
-
-
-
 
     linhas.forEach((linha, i) => {
         const entradas = linha.querySelectorAll("input");
@@ -167,10 +290,13 @@ function gerarGrafico() {
             }
         }
     }
+
     //===================================================================
     Plotly.newPlot('plot', data, layout);
     //===================================================================
 
+
+    //=================================================================
     let tabela = `<table>
     <tr>
       <th>Ponto</th>
