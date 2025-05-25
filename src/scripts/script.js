@@ -1,3 +1,7 @@
+//Variaveis globais
+let x = [], y = [], z = [], cotaProjeto = 100;
+
+
 //===============================================================================================
 function atualizarRotuloPontos() {
     const labels = document.querySelectorAll("#input-table tbody .ponto-label");
@@ -6,6 +10,7 @@ function atualizarRotuloPontos() {
     });
 }
 //===============================================================================================
+
 const dropzone = document.getElementById('dropzone');
 const fileInput = document.getElementById('fileInput');
 
@@ -70,14 +75,12 @@ function processarArquivo(file) {
         <td><input type="number" value="${valorX}"></td>
         <td><input type="number" value="${valorY}"></td>
         <td><input type="number" value="${valorZ}"></td>
-        <td><button onclick="removerLinha(this)">Excluir</button></td>
+        <td><button onclick="removerLinha(this)" id="excluirln">Excluir</button></td>
       `;
             tbody.appendChild(novaLinha);
         }
 
         atualizarRotuloPontos();  // ✅ Atualiza "P1", "P2", etc.
-
-        gerarGrafico();  // ✅ Gera gráfico e tabela de cortes/aterros a partir da tabela preenchida
     };
 
     reader.readAsArrayBuffer(file);
@@ -153,28 +156,18 @@ function adicionarLinha() {
     tbody.appendChild(novaLinha);
     atualizarRotuloPontos();
 }
-
+//===============================================================================================
 function removerLinha(botao) {
     const linha = botao.closest("tr");
     linha.remove();
     atualizarRotuloPontos();
-    gerarGrafico();  // Atualiza o gráfico e a tabela
 }
-//===============================================================================================
-
-
-//===============================================================================================
-let cotaProjeto = 100;
-let x = [], y = [], z = [];
-
 //===============================================================================================
 
 function adicionarCota(value) {
     cotaProjeto = Number(value);
 }
-
 //===============================================================================================
-
 function gerarGrafico() {
     let resultados = [];
     const linhas = document.querySelectorAll("#input-table tbody tr");
@@ -292,7 +285,6 @@ function gerarGrafico() {
             }
         }];
     }
-
     const layout = {
         title: 'Mapa Topográfico',
         scene: {
@@ -308,13 +300,9 @@ function gerarGrafico() {
             }
         }
     }
-
     //===================================================================
     Plotly.newPlot('plot', data, layout);
     //===================================================================
-
-
-    //=================================================================
     let tabela = `<table>
     <tr>
       <th>Ponto</th>
@@ -328,8 +316,8 @@ function gerarGrafico() {
     </tr>`;
 
     resultados.forEach(r => {
-        const tipoClasse = r.diferenca < 0 ? 'linha-corte' :
-            r.diferenca > 0 ? 'linha-aterro' : '';
+        const tipoClasse = r.diferenca < 0 ? 'linha-corte' : r.diferenca > 0 ? 'linha-aterro' : '';
+
         tabela += `<tr class="${tipoClasse}">
       <td>${r.ponto}</td>
       <td>${r.x}</td>
@@ -344,6 +332,7 @@ function gerarGrafico() {
 
     const totalCorte = resultados.reduce((acc, cur) => acc + cur.corte, 0).toFixed(2);
     const totalAterro = resultados.reduce((acc, cur) => acc + cur.aterro, 0).toFixed(2);
+
     tabela += `<tr style="font-weight:bold;">
     <td colspan="6">Totais</td>
     <td>${totalCorte} m³</td>
@@ -352,4 +341,18 @@ function gerarGrafico() {
     tabela += `</table>`;
 
     document.getElementById('result-table').innerHTML = tabela;
+}
+//===============================================================================================
+function exportTable() {
+    gerarGrafico();
+    console.log("Exportar tabela");
+
+    // Seleciona a tabela pelo id
+    const tabelaElement = document.getElementById('result-table').querySelector('table');
+
+    // Converte a tabela para uma planilha
+    const workbook = XLSX.utils.table_to_book(tabelaElement, { sheet: "Resultados" });
+
+    // Gera o arquivo xlsx
+    XLSX.writeFile(workbook, "tabela_corte_aterro.xlsx");
 }

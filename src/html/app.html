@@ -192,15 +192,12 @@
             </tbody>
         </table>
 
-        <div style="text-align: center; margin: 1rem 0;">
-
+        <div>
             <input type="number" id="nivelCota" value="100" onchange="adicionarCota(Number(this.value))">
             <!--cota projeto-->
             <button onclick="adicionarLinha()">Adicionar Ponto</button>
             <button onclick="gerarGrafico()">Gerar Gráfico</button>
-            <button onclick="gerarTabelaDoArquivo()">Gerar Gráfico a partir do Arquivo</button>
-
-
+            <button onclick="exportTable()">Exportar tabela de Corte e Aterro</button>
             <select id="graficoTipo" onchange="gerarGrafico()">
                 <option value="scatter3d">Scatter 3D</option>
                 <option value="mesh3d">Mesh 3D</option>
