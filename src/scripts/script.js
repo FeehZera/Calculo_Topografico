@@ -52,31 +52,46 @@ function processarArquivo(file) {
 
         const json = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
-        x.length = 0;
-        y.length = 0;
-        z.length = 0;
+        const novosX = [];
+        const novosY = [];
+        const novosZ = [];
+
+        for (let i = 1; i < json.length; i++) {  // Validação primeiro
+            const brutoX = json[i][1];
+            const brutoY = json[i][2];
+            const brutoZ = json[i][3];
+
+            const valorX = parseFloat(brutoX);
+            const valorY = parseFloat(brutoY);
+            const valorZ = parseFloat(brutoZ);
+
+            if (!isFinite(valorX) || !isFinite(valorY) || !isFinite(valorZ)) {
+                mostrarErro(`Erro: todos os valores da linha ${i} devem ser preenchidos com números válidos. Encontrado: X="${brutoX}", Y="${brutoY}", Z="${brutoZ}"`);
+                return;  // Sai aqui, sem alterar nada.
+            }
+
+            novosX.push(valorX);
+            novosY.push(valorY);
+            novosZ.push(valorZ);
+        }
+
+        // Só se tudo for válido, atualiza o global:
+        x.length = 0; x.push(...novosX);
+        y.length = 0; y.push(...novosY);
+        z.length = 0; z.push(...novosZ);
 
         const tbody = document.querySelector("#input-table tbody");
-        tbody.innerHTML = "";  // ✅ Limpa a tabela antes de preencher
+        tbody.innerHTML = "";  // Limpa antes
 
-        for (let i = 1; i < json.length; i++) {  // Pula o cabeçalho
-            const valorX = parseFloat(json[i][1]) || 0;
-            const valorY = parseFloat(json[i][2]) || 0;
-            const valorZ = parseFloat(json[i][3]) || 0;
-
-            x.push(valorX);
-            y.push(valorY);
-            z.push(valorZ);
-
-            // ✅ Cria linha na tabela HTML
+        for (let i = 0; i < novosX.length; i++) {
             const novaLinha = document.createElement("tr");
             novaLinha.innerHTML = `
-        <td class="ponto-label"></td>
-        <td><input type="number" value="${valorX}"></td>
-        <td><input type="number" value="${valorY}"></td>
-        <td><input type="number" value="${valorZ}"></td>
-        <td><button onclick="removerLinha(this)" id="excluirln">Excluir</button></td>
-      `;
+                <td class="ponto-label"></td>
+                <td><input type="number" value="${novosX[i]}"></td>
+                <td><input type="number" value="${novosY[i]}"></td>
+                <td><input type="number" value="${novosZ[i]}"></td>
+                <td><button onclick="removerLinha(this)" id="excluirln">Excluir</button></td>
+            `;
             tbody.appendChild(novaLinha);
         }
 
@@ -85,7 +100,6 @@ function processarArquivo(file) {
 
     reader.readAsArrayBuffer(file);
 }
-
 //===============================================================================================
 
 async function exportarXLSX() {
@@ -188,8 +202,12 @@ function gerarGrafico() {
             cotaProjeto: cotaProjeto,
             diferenca: valorZ - cotaProjeto,
             corte: Math.max(0, cotaProjeto - valorZ),
-            aterro: Math.max(0, valorZ - cotaProjeto)
+            aterro: Math.max(0, valorZ - cotaProjeto),
         });
+        if (isNaN(valorX) || isNaN(valorY) || isNaN(valorZ)) {
+            mostrarErro(`Erro: todos os valores da linha ${i + 1} devem ser preenchidos corretamente.`);
+            return;
+        }
     });
 
     const plano = {
@@ -355,4 +373,9 @@ function exportTable() {
 
     // Gera o arquivo xlsx
     XLSX.writeFile(workbook, "tabela_corte_aterro.xlsx");
+}
+
+
+function mostrarErro(texto) {
+    alert(texto);
 }
