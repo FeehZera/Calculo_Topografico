@@ -306,6 +306,12 @@ function gerarGrafico() {
     const layout = {
         title: 'Mapa Topográfico',
         scene: {
+            camera: {
+                // ✅ Define o ângulo e posição inicial da câmera
+                eye: { x: 15, y: 15, z: 15 },  // "Zoom out" maior número, "Zoom in" menor número
+                up: { x: 3, y: 0, z: 1 },   // Eixo "para cima" → opcional
+                center: { x: 0, y: 0, z: 0 } // Centro da cena
+            },
             aspectmode: 'manual',
             aspectratio: {
                 x: 15, //largura
@@ -378,4 +384,9 @@ function exportTable() {
 
 function mostrarErro(texto) {
     alert(texto);
+}
+
+function imprimirPDF() {
+    gerarGrafico();
+    window.print();
 }
