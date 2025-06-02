@@ -1,29 +1,40 @@
-let abaAtual = 1;
+// main.js - Apenas lógica de navegação de abas e barra indicadora
+
+let abaAtual = 1; // Padrão: começar na aba "Seu Terreno"
+
 const tabTerreno = document.getElementById('Terreno');
 const tabGrafico = document.getElementById('Grafico');
 const tabResultados = document.getElementById('Resultados');
+
 const btnSeuTerreno = document.getElementById('btnSeuTerreno');
 const btnGrafico = document.getElementById('btnGrafico');
 const btnResultados = document.getElementById('btnResultados');
+
 const allNavButtons = document.querySelectorAll('.nav-button');
 const allTabContents = document.querySelectorAll('.tab-content');
 const navIndicatorBar = document.querySelector('.main-nav .nav-indicator-bar');
 
+// Função para atualizar a posição e largura da barra indicadora da aba ativa
 function atualizarBarraIndicadora(activeButton) {
   if (activeButton && navIndicatorBar) {
     const offsetLeftRelativeToNav = activeButton.offsetLeft;
     navIndicatorBar.style.width = `${activeButton.offsetWidth}px`;
     navIndicatorBar.style.left = `${offsetLeftRelativeToNav}px`;
-    navIndicatorBar.style.display = 'block';
+    navIndicatorBar.style.display = 'block'; // Garante que a barra esteja visível
   } else if (navIndicatorBar) {
-    navIndicatorBar.style.display = 'none';
+    navIndicatorBar.style.display = 'none'; // Esconde a barra se não houver botão ativo
   }
 }
 
+// Função para atualizar a visibilidade das abas e o estado dos botões de navegação
 function atualizarVisibilidadeAbas() {
+  // Remove a classe 'active' de todas as abas e botões
   allTabContents.forEach(content => content.classList.remove('active'));
   allNavButtons.forEach(btn => btn.classList.remove('active'));
-  let botaoAtivo = null;
+
+  let botaoAtivo = null; // Para rastrear qual botão está ativo e atualizar a barra indicadora
+
+  // Adiciona a classe 'active' à aba e botão corretos com base em 'abaAtual'
   if (abaAtual === 1) {
     if (tabTerreno) tabTerreno.classList.add('active');
     if (btnSeuTerreno) {
@@ -43,20 +54,30 @@ function atualizarVisibilidadeAbas() {
       botaoAtivo = btnResultados;
     }
   }
+
+  // Atualiza a barra indicadora com base no botão ativo
   atualizarBarraIndicadora(botaoAtivo);
 }
+
+// Evento DOMContentLoaded garante que o DOM esteja completamente carregado
 document.addEventListener('DOMContentLoaded', () => {
+  // Define a aba inicial e atualiza a visibilidade
   const initialActiveButton = document.querySelector('.nav-button.active');
   if (initialActiveButton) {
+    // Se já houver um botão ativo no HTML, usa ele para definir a aba inicial
     if (initialActiveButton.id === 'btnSeuTerreno') abaAtual = 1;
     else if (initialActiveButton.id === 'btnGrafico') abaAtual = 2;
     else if (initialActiveButton.id === 'btnResultados') abaAtual = 3;
     atualizarVisibilidadeAbas();
+    // Pequeno atraso para garantir que a barra indicadora posicione corretamente após a renderização inicial
     setTimeout(() => atualizarBarraIndicadora(initialActiveButton), 50);
   } else {
+    // Se não houver botão ativo no HTML, define a aba inicial para 1 (Terreno)
     abaAtual = 1;
     atualizarVisibilidadeAbas();
   }
+
+  // Adiciona event listeners para os botões de navegação
   if (btnSeuTerreno) {
     btnSeuTerreno.addEventListener('click', () => {
       abaAtual = 1;
@@ -66,6 +87,8 @@ document.addEventListener('DOMContentLoaded', () => {
   if (btnGrafico) {
     btnGrafico.addEventListener('click', () => {
       abaAtual = 2;
+      // Nota: a função gerarGrafico() é chamada via onclick no HTML do botão PLAN IT!
+      // ou quando a cota ou tipo de gráfico muda. Não precisa ser chamada aqui.
       atualizarVisibilidadeAbas();
     });
   }
@@ -75,111 +98,24 @@ document.addEventListener('DOMContentLoaded', () => {
       atualizarVisibilidadeAbas();
     });
   }
+
+  // Adiciona listener para o botão "PLAN IT!" para mudar para a aba de Gráfico
+  // A lógica de gerar o gráfico é chamada pelo onclick no HTML deste botão.
+  const btnPlanIt = document.querySelector('#Terreno .btn-planit');
+  if (btnPlanIt) {
+    btnPlanIt.addEventListener('click', () => {
+      // Apenas muda a aba, a função gerarGrafico() é chamada via onclick no HTML
+      abaAtual = 2;
+      atualizarVisibilidadeAbas();
+    });
+  }
+
+
+  // Atualiza a barra indicadora quando a janela é redimensionada
   window.addEventListener('resize', () => {
     const currentActiveButton = document.querySelector('.nav-button.active');
     if (currentActiveButton) {
       atualizarBarraIndicadora(currentActiveButton);
     }
   });
-  const btnPlus = document.querySelector('#Terreno .btn-plus');
-  const tabelaPontosBody = document.querySelector('#Terreno .scrollable-table table tbody');
-  const btnAdicionarComInput = document.querySelector('.terreno-lateral-esq .btn-adicionar');
-  const inputQuantosPontos = document.getElementById('quantos-pontos');
-  const btnPlanIt = document.querySelector('#Terreno .btn-planit');
-
-  function criarLinhaPontoHTML(numeroPonto) {
-    const newRow = document.createElement('tr');
-    newRow.innerHTML = `
-            <td class="ponto-label-cell">
-                <div class="ponto-marker">
-                    <h1>P${numeroPonto}</h1>
-                </div>
-            </td>
-            <td><span class="input-label teko-eixo">X</span><input type="number" step="0.01" name="ponto_x_${numeroPonto}" class="input-coordenada"></td>
-            <td><span class="input-label teko-eixo">Y</span><input type="number" step="0.01" name="ponto_y_${numeroPonto}" class="input-coordenada"></td>
-            <td><span class="input-label teko-eixo">Z</span><input type="number" step="0.01" name="ponto_z_${numeroPonto}" class="input-coordenada"></td>
-            <td class="lixeira-cell"><button class="btn-lixeira"><img src="../img/Lixo.svg" alt="Remover"></button></td>
-        `;
-    const lixeiraButton = newRow.querySelector('.btn-lixeira');
-    if (lixeiraButton) {
-      lixeiraButton.addEventListener('click', function() {
-        this.closest('tr').remove();
-        reindexarPontos();
-      });
-    }
-    return newRow;
-  }
-
-  function reindexarPontos() {
-    if (!tabelaPontosBody) return;
-    const rows = tabelaPontosBody.querySelectorAll('tr');
-    const totalRows = rows.length;
-    rows.forEach((row, index) => {
-      const pontoNum = totalRows - index;
-      const pontoH1 = row.querySelector('.ponto-label-cell .ponto-marker h1');
-      if (pontoH1) {
-        pontoH1.textContent = `P${pontoNum}`;
-      }
-      row.querySelectorAll('input.input-coordenada').forEach(input => {
-        const oldName = input.name;
-        if (oldName) {
-          const nameParts = oldName.split('_');
-          if (nameParts.length === 3) {
-            input.name = `${nameParts[0]}_${nameParts[1]}_${pontoNum}`;
-          }
-        }
-      });
-    });
-  }
-
-  function adicionarPontosViaInput() {
-    if (!inputQuantosPontos || !tabelaPontosBody) return;
-    const numPontosParaAdicionar = parseInt(inputQuantosPontos.value, 10);
-    if (isNaN(numPontosParaAdicionar) || numPontosParaAdicionar < 1) {
-      alert("Por favor, insira um número válido de pontos.");
-      return;
-    }
-    for (let i = 0; i < numPontosParaAdicionar; i++) {
-      const novoNumeroPonto = tabelaPontosBody.querySelectorAll('tr').length + 1;
-      const newRow = criarLinhaPontoHTML(novoNumeroPonto);
-      tabelaPontosBody.insertBefore(newRow, tabelaPontosBody.firstChild);
-    }
-    reindexarPontos();
-    inputQuantosPontos.value = '';
-  }
-
-  function adicionarListenersLixeiraIniciais() {
-    if (!tabelaPontosBody) return;
-    const lixeiraButtons = tabelaPontosBody.querySelectorAll('.btn-lixeira');
-    lixeiraButtons.forEach(button => {
-      if (button.dataset.listenerAttached) return;
-      button.addEventListener('click', function() {
-        this.closest('tr').remove();
-        reindexarPontos();
-      });
-      button.dataset.listenerAttached = 'true';
-    });
-  }
-  if (btnPlus && tabelaPontosBody) {
-    btnPlus.addEventListener('click', () => {
-      const novoNumeroPonto = tabelaPontosBody.querySelectorAll('tr').length + 1;
-      const newRow = criarLinhaPontoHTML(novoNumeroPonto);
-      tabelaPontosBody.insertBefore(newRow, tabelaPontosBody.firstChild);
-      reindexarPontos();
-    });
-  }
-  if (btnAdicionarComInput) {
-    btnAdicionarComInput.addEventListener('click', adicionarPontosViaInput);
-  }
-  if (btnPlanIt) {
-    btnPlanIt.addEventListener('click', () => {
-      console.log("Botão PLAN IT! clicado. Lógica de coleta de dados e geração de gráfico a ser implementada.");
-      abaAtual = 2;
-      atualizarVisibilidadeAbas();
-    });
-  }
-  adicionarListenersLixeiraIniciais();
-  if (tabelaPontosBody && tabelaPontosBody.querySelectorAll('tr').length > 0) {
-    reindexarPontos();
-  }
 });

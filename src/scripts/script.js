@@ -2,7 +2,7 @@
 let x = [], y = [], z = [], cotaProjeto = 100;
 
 //===============================================================================================
-// ATUALIZADO: Selecionando os novos IDs para dropzones e file inputs do HEADER
+// Selecionando os novos IDs para dropzones e file inputs do HEADER
 const dropzoneHeader = document.getElementById('dropzoneHeader');
 const fileInputHeader = document.getElementById('fileInputHeader');
 
@@ -33,7 +33,7 @@ if (dropzoneHeader && fileInputHeader) {
 }
 
 
-// ATUALIZADO: Selecionando os novos IDs para o dropzone e file input da ASIDE
+// Selecionando os novos IDs para o dropzone e file input da ASIDE
 const dropzoneAside = document.getElementById('dropzoneAside');
 const fileInputAside = document.getElementById('fileInputAside');
 
@@ -88,7 +88,6 @@ function processarArquivo(file) {
 
         // Inicia do índice 1 para pular o cabeçalho se 'header: 1' já estiver sendo usado
         for (let i = 1; i < json.length; i++) {
-            // Verifica se a linha tem dados suficientes (assumindo que a planilha tem pelo menos 4 colunas: Ponto, X, Y, Z)
             if (json[i].length < 4) {
                 mostrarErro(`Erro: A linha ${i + 1} da planilha não tem dados suficientes para X, Y e Z.`);
                 return;
@@ -210,12 +209,10 @@ async function exportarXLSX() {
 
 function adicionarCota(value) {
     cotaProjeto = Number(value);
-    // NOVO: Chama gerarGrafico() após a cota do projeto ser atualizada
     const linhasTabelaInput = document.querySelectorAll("#input-table tbody tr");
-    if (linhasTabelaInput.length > 0) { // Só chama se houver pontos para calcular
+    if (linhasTabelaInput.length > 0) {
         gerarGrafico();
     } else {
-        // Se não houver pontos, limpa o gráfico e a tabela de resultados
         Plotly.newPlot('plot', [], {});
         const tbodyResultados = document.getElementById('resultados-tbody');
         if (tbodyResultados) tbodyResultados.innerHTML = '';
@@ -356,9 +353,9 @@ function gerarGrafico() {
     // <<< AQUI VOCÊ MANIPULA O TAMANHO DA CÉLULA DA GRELHA >>>
     // O valor padrão na função calcularVolumesCorteAterro é 1.
     // Altere este valor para o que desejar para controlar a precisão do cálculo de volume.
-    const tamanhoDaGrelhaParaCalculoDeVolume = 0.5; // Exemplo: 1 metro por 1 metro
-    // Ou 0.5 para 0.5m x 0.5m (maior precisão, mais lento)
-    // Ou 5 para 5m x 5m (menor precisão, mais rápido)
+    const tamanhoDaGrelhaParaCalculoDeVolume = 0.5; // Exemplo: 0.5 metro por 0.5 metro (maior precisão que 1)
+    // Ou 1 para 1m x 1m (bom equilíbrio)
+    // Ou 5 para 5m x 5m (menor precisão, mais rápido para grandes áreas)
     // =========================================================
 
     const { totalCorteVol, totalAterroVol } = calcularVolumesCorteAterro(x, y, z, cotaProjeto, tamanhoDaGrelhaParaCalculoDeVolume);
@@ -598,34 +595,52 @@ function imprimirPDF() {
 
 function atualizarRotuloPontos() {
     const pontoMarkers = document.querySelectorAll("#input-table .ponto-marker h1");
-    pontoMarkers.forEach((marker, index) => {
-        marker.textContent = `P${index + 1}`;
+    // Inverter a ordem dos rótulos para que P1 fique na primeira linha (topo)
+    const rows = document.querySelectorAll("#input-table tbody tr");
+    rows.forEach((row, index) => {
+        const marker = row.querySelector(".ponto-marker h1");
+        if (marker) {
+            marker.textContent = `P${index + 1}`; // Indexação de 1 a N
+        }
+        // Também é uma boa prática reindexar os atributos name dos inputs para corresponder ao Px
+        row.querySelectorAll('input.input-coordenada').forEach(input => {
+            const nameParts = input.name.split('_');
+            if (nameParts.length >= 2) { // Garante que é um nome tipo ponto_x_N
+                input.name = `${nameParts[0]}_${nameParts[1]}_${index + 1}`;
+            }
+        });
     });
 }
 
-function adicionarLinha() {
+// Função para adicionar uma nova linha à tabela de entrada
+function adicionarLinha(quantidade = 1) { // Agora aceita um argumento para adicionar múltiplas linhas
     const tbody = document.querySelector("#input-table tbody");
     if (!tbody) {
         console.error("Tbody da tabela de entrada não encontrado.");
         return;
     }
-    const novaLinha = document.createElement("tr");
-    novaLinha.innerHTML = `
-        <td class="ponto-label-cell">
-            <div class="ponto-marker">
-                <h1>P?</h1>
-            </div>
-        </td>
-        <td><span class="input-label teko-eixo">X</span><input type="number" value="0" step="0.01" name="ponto_x_new" class="input-coordenada"></td>
-        <td><span class="input-label teko-eixo">Y</span><input type="number" value="0" step="0.01" name="ponto_y_new" class="input-coordenada"></td>
-        <td><span class="input-label teko-eixo">Z</span><input type="number" value="0" step="0.01" name="ponto_z_new" class="input-coordenada"></td>
-        <td class="lixeira-cell"><button class="btn-lixeira"><img src="../img/Lixo.svg" alt="Remover"></button></td>
-    `;
-    tbody.appendChild(novaLinha);
-    atualizarRotuloPontos();
-    addLixeiraEventListener(novaLinha.querySelector('.btn-lixeira'));
+
+    for (let i = 0; i < quantidade; i++) {
+        const novaLinha = document.createElement("tr");
+        novaLinha.innerHTML = `
+            <td class="ponto-label-cell">
+                <div class="ponto-marker">
+                    <h1>P?</h1>
+                </div>
+            </td>
+            <td><span class="input-label teko-eixo">X</span><input type="number" value="0" step="0.01" name="ponto_x_new" class="input-coordenada"></td>
+            <td><span class="input-label teko-eixo">Y</span><input type="number" value="0" step="0.01" name="ponto_y_new" class="input-coordenada"></td>
+            <td><span class="input-label teko-eixo">Z</span><input type="number" value="0" step="0.01" name="ponto_z_new" class="input-coordenada"></td>
+            <td class="lixeira-cell"><button class="btn-lixeira"><img src="../img/Lixo.svg" alt="Remover"></button></td>
+        `;
+        // Adiciona a nova linha no final do tbody (para manter a ordem P1, P2... Pn)
+        tbody.appendChild(novaLinha);
+        addLixeiraEventListener(novaLinha.querySelector('.btn-lixeira'));
+    }
+    atualizarRotuloPontos(); // Reindexa após adicionar todas as linhas
 }
 
+// Função para remover uma linha da tabela de entrada
 function removerLinha(buttonElement) {
     const row = buttonElement.closest('tr');
     if (row) {
@@ -634,32 +649,47 @@ function removerLinha(buttonElement) {
     }
 }
 
+// Função auxiliar para adicionar listener de clique aos botões de lixeira
 function addLixeiraEventListener(button) {
     button.addEventListener('click', () => removerLinha(button));
 }
 
 
 document.addEventListener('DOMContentLoaded', () => {
+    // Inicializa os rótulos dos pontos existentes na tabela de entrada
     atualizarRotuloPontos();
 
-    const btnAdicionar = document.querySelector(".btn-adicionar");
-    if (btnAdicionar) {
-        btnAdicionar.addEventListener('click', adicionarLinha);
-    }
-    const btnPlus = document.querySelector(".btn-plus");
-    if (btnPlus) {
-        btnPlus.addEventListener('click', adicionarLinha);
+    // Adiciona event listeners para os botões "Adicionar" e "Plus"
+    const btnAdicionarInput = document.querySelector(".terreno-lateral-esq .btn-adicionar"); // Botão ao lado do input de quantidade
+    const inputQuantosPontos = document.getElementById('quantos-pontos'); // Input de quantidade
+
+    if (btnAdicionarInput && inputQuantosPontos) {
+        btnAdicionarInput.addEventListener('click', () => {
+            const numPontosParaAdicionar = parseInt(inputQuantosPontos.value, 10);
+            if (isNaN(numPontosParaAdicionar) || numPontosParaAdicionar < 1) {
+                mostrarErro("Por favor, insira um número válido de pontos (maior que zero).");
+                return;
+            }
+            adicionarLinha(numPontosParaAdicionar); // Chama a função com a quantidade
+            inputQuantosPontos.value = ''; // Limpa o input após adicionar
+        });
     }
 
-    document.querySelectorAll(".btn-lixeira").forEach(button => {
+    const btnPlus = document.querySelector(".terreno-central .btn-plus"); // Botão "Plus" grande
+    if (btnPlus) {
+        btnPlus.addEventListener('click', () => {
+            adicionarLinha(1); // Adiciona apenas uma linha
+        });
+    }
+
+    // Adiciona event listeners para todos os botões de lixeira existentes inicialmente no DOM
+    document.querySelectorAll("#input-table .btn-lixeira").forEach(button => {
         addLixeiraEventListener(button);
     });
 
     const cotaProjetoInput = document.getElementById('cota-projeto');
     if (cotaProjetoInput) {
         cotaProjeto = Number(cotaProjetoInput.value) || 100;
-        // REMOVIDO: A linha abaixo é redundante pois já existe onclick no HTML
-        // cotaProjetoInput.addEventListener('change', (e) => adicionarCota(Number(e.target.value)));
     }
 });
 
