@@ -1,219 +1,310 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="PT-BR">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mapa Topográfico - Corte/Aterro</title>
-    <link rel="stylesheet" href="../styles/style.css" />
-    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/exceljs/dist/exceljs.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PLAN IT!</title>
+  <link rel="stylesheet" href="../styles/style.css">
+  <link rel="shortcut icon" href="../img/Logotipo Abreviado.svg" type="image/x-icon">
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/exceljs/dist/exceljs.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
 </head>
 
 <body>
-    <h2 class="titulo-animado">Visualização do Terreno e Cálculo Automático de Corte/Aterro</h2>
-    <div id="central">
-        <!--Aqui vai a div do csv/xlsx-->
-
-        <div id="inputcsv">
-            <div style="width: 700px;">
-                <label for="quantiPontos">Quantidade:</label>
-                <input type="number" id="quantiPontos" value="3" step="1" min="3">
-            </div>
-            <button onclick="exportarXLSX()">Gerar Tabela</button>
-        </div>
-
-        <div id="dropzone">
-            <p>Arraste e solte seu arquivo aqui, ou clique para selecionar</p>
-            <input type="file" id="fileInput" style="display:none">
-        </div>
-
-
-
-        <h3>Entrar com Coordenadas</h3>
-        <table id="input-table">
-            <thead>
-                <tr>
-                    <th>Ponto</th>
-                    <th>Posição X</th>
-                    <th>Posição Y</th>
-                    <th>Z (Cota Medida)</th>
-                    <th>Ação</th>
-                </tr>
-            </thead>
-            <tbody><!--
-                <tr>
-                    <td class="ponto-label">P1</td>
-                    <td><input type="number" value="0"></td>
-                    <td><input type="number" value="0"></td>
-                    <td><input type="number" value="101"></td>
-                    <td><button onclick="removerLinha(this)" id="excluirln">Excluir</button></td>
-                </tr>
-                <tr>
-                    <td class="ponto-label">P2</td>
-                    <td><input type="number" value="10"></td>
-                    <td><input type="number" value="0"></td>
-                    <td><input type="number" value="99"></td>
-                    <td><button onclick="removerLinha(this)" id="excluirln">Excluir</button></td>
-                </tr>
-
-                
-                <tr>
-                    <td class="ponto-label">P3</td>
-                    <td><input type="number" value="20"></td>
-                    <td><input type="number" value="0"></td>
-                    <td><input type="number" value="100"></td>
-                    <td><button onclick="removerLinha(this)" id="excluirln">Excluir</button></td>
-                </tr>
-                <tr>
-                    <td class="ponto-label">P4</td>
-                    <td><input type="number" value="30"></td>
-                    <td><input type="number" value="0"></td>
-                    <td><input type="number" value="101"></td>
-                    <td><button onclick="removerLinha(this)" id="excluirln">Excluir</button></td>
-                </tr>
-                <tr>
-                    <td class="ponto-label">P5</td>
-                    <td><input type="number" value="40"></td>
-                    <td><input type="number" value="0"></td>
-                    <td><input type="number" value="100"></td>
-                    <td><button onclick="removerLinha(this)" id="excluirln">Excluir</button></td>
-                </tr>
-                <tr>
-                    <td class="ponto-label">P6</td>
-                    <td><input type="number" value="0"></td>
-                    <td><input type="number" value="10"></td>
-                    <td><input type="number" value="101"></td>
-                    <td><button onclick="removerLinha(this)" id="excluirln">Excluir</button></td>
-                </tr>
-                <tr>
-                    <td class="ponto-label">P7</td>
-                    <td><input type="number" value="10"></td>
-                    <td><input type="number" value="10"></td>
-                    <td><input type="number" value="99"></td>
-                    <td><button onclick="removerLinha(this)" id="excluirln">Excluir</button></td>
-                </tr>
-                <tr>
-                    <td class="ponto-label">P8</td>
-                    <td><input type="number" value="20"></td>
-                    <td><input type="number" value="10"></td>
-                    <td><input type="number" value="97"></td>
-                    <td><button onclick="removerLinha(this)" id="excluirln">Excluir</button></td>
-                </tr>
-                <tr>
-                    <td class="ponto-label">P9</td>
-                    <td><input type="number" value="30"></td>
-                    <td><input type="number" value="10"></td>
-                    <td><input type="number" value="98"></td>
-                    <td><button onclick="removerLinha(this)" id="excluirln">Excluir</button></td>
-                </tr>
-                <tr>
-                    <td class="ponto-label">P10</td>
-                    <td><input type="number" value="40"></td>
-                    <td><input type="number" value="10"></td>
-                    <td><input type="number" value="103"></td>
-                    <td><button onclick="removerLinha(this)" id="excluirln">Excluir</button></td>
-                </tr>
-                <tr>
-                    <td class="ponto-label">P11</td>
-                    <td><input type="number" value="0"></td>
-                    <td><input type="number" value="20"></td>
-                    <td><input type="number" value="105"></td>
-                    <td><button onclick="removerLinha(this)" id="excluirln">Excluir</button></td>
-                </tr>
-                <tr>
-                    <td class="ponto-label">P12</td>
-                    <td><input type="number" value="10"></td>
-                    <td><input type="number" value="20"></td>
-                    <td><input type="number" value="100"></td>
-                    <td><button onclick="removerLinha(this)" id="excluirln">Excluir</button></td>
-                </tr>
-                <tr>
-                    <td class="ponto-label">P13</td>
-                    <td><input type="number" value="20"></td>
-                    <td><input type="number" value="20"></td>
-                    <td><input type="number" value="101"></td>
-                    <td><button onclick="removerLinha(this)" id="excluirln">Excluir</button></td>
-                </tr>
-                <tr>
-                    <td class="ponto-label">P14</td>
-                    <td><input type="number" value="30"></td>
-                    <td><input type="number" value="20"></td>
-                    <td><input type="number" value="102"></td>
-                    <td><button onclick="removerLinha(this)" id="excluirln">Excluir</button></td>
-                </tr>
-                <tr>
-                    <td class="ponto-label">P15</td>
-                    <td><input type="number" value="40"></td>
-                    <td><input type="number" value="20"></td>
-                    <td><input type="number" value="103"></td>
-                    <td><button onclick="removerLinha(this)" id="excluirln">Excluir</button></td>
-                </tr>
-                <tr>
-                    <td class="ponto-label">P16</td>
-                    <td><input type="number" value="0"></td>
-                    <td><input type="number" value="30"></td>
-                    <td><input type="number" value="98"></td>
-                    <td><button onclick="removerLinha(this)" id="excluirln">Excluir</button></td>
-                </tr>
-                <tr>
-                    <td class="ponto-label">P17</td>
-                    <td><input type="number" value="10"></td>
-                    <td><input type="number" value="30"></td>
-                    <td><input type="number" value="97"></td>
-                    <td><button onclick="removerLinha(this)" id="excluirln">Excluir</button></td>
-                </tr>
-                <tr>
-                    <td class="ponto-label">P18</td>
-                    <td><input type="number" value="20"></td>
-                    <td><input type="number" value="30"></td>
-                    <td><input type="number" value="100"></td>
-                    <td><button onclick="removerLinha(this)" id="excluirln">Excluir</button></td>
-                </tr>
-                <tr>
-                    <td class="ponto-label">P19</td>
-                    <td><input type="number" value="30"></td>
-                    <td><input type="number" value="30"></td>
-                    <td><input type="number" value="101"></td>
-                    <td><button onclick="removerLinha(this)" id="excluirln">Excluir</button></td>
-                </tr>
-                <tr>
-                    <td class="ponto-label">P20</td>
-                    <td><input type="number" value="40"></td>
-                    <td><input type="number" value="30"></td>
-                    <td><input type="number" value="98"></td>
-                    <td><button onclick="removerLinha(this)" id="excluirln">Excluir</button></td>
-                </tr>
--->
-
-
-            </tbody>
-        </table>
-
-        <div>
-            <input type="number" id="nivelCota" value="100" onchange="adicionarCota(Number(this.value))">
-            <!--cota projeto-->
-            <button onclick="adicionarLinha()">Adicionar Ponto</button>
-            <button onclick="gerarGrafico()">Gerar Gráfico</button>
-            <button onclick="exportTable()">Exportar tabela de Corte e Aterro</button>
-            <button onclick="imprimirPDF()">Imprimir PDF</button>
-            
-            <select id="graficoTipo" onchange="gerarGrafico()">
-                <option value="scatter3d">Scatter 3D</option>
-                <option value="mesh3d">Mesh 3D</option>
-                <option value="heatmap">Heatmap</option>
-            </select>
-        </div>
-
-        <div id="plotdiv">
-            <div id="plot"></div>
-        </div>
-        <div id="result-table"></div>
+  <header>
+    <img src="../img/Logotipo.svg" alt="Logotipo PLAN IT!" class="header-logo">
+    <div class="header-links">
+      <a href="#" class="header-link" onclick="exportarXLSX()">Exportar Planilha</a>
+      <a href="#" class="header-link">Ajuda</a>
+      <div id="dropzoneHeader"> <!-- ID RENOMEADO AQUI -->
+        <a href="#" class="header-link"><input type="file" id="fileInputHeader" style="display:none">Importar
+          Planilha</a>
+      </div>
     </div>
+    <a href="#" class="header-link video-tutorial-link">
+      Vídeo tutorial aqui
+      <img src="../img/Button Play.svg" alt="Play" class="play-icon">
+      <img src="../img/Seta 1.svg" alt="" class="seta-indicativa seta-1">
+    </a>
+  </header>
+  <main>
 
-    <script src="../scripts/script.js"></script>
+    <nav class="main-nav">
+      <button id="btnSeuTerreno" class="nav-button"><img src="../img/Button Seu Terreno.svg" alt=""></button>
+      <button id="btnGrafico" class="nav-button"><img src="../img/Button Grafico.svg" alt=""></button>
+      <button id="btnResultados" class="nav-button"><img src="../img/Button Resultados.svg" alt=""></button>
+      <div class="nav-indicator-bar"></div>
+    </nav>
+
+    <div class="tab-content-wrapper">
+
+      <section id="Terreno" class="tab-content active">
+
+        <div class="terreno-layout">
+
+          <aside class="terreno-lateral-esq">
+            <!--<img src="../img/Seta 4.svg" alt="" class="seta-indicativa seta-4">-->
+            <p class="lexend-text">Quer adicionar tudo de uma vez só?</p>
+
+            <div id="quantos-pontos-container">
+              <label for="quantos-pontos" class="lexend-text" id="pontos-selecionados">Quantos pontos tem seu
+                <br>terreno?</label>
+              <input type="number" id="quantos-pontos" name="quantos-pontos" min="1">
+            </div>
+
+            <button class="btn-adicionar"><img src="../img/Button Adicionar.svg" alt="Adicionar"></button>
+
+            <img src="../img/Seta 5.svg" alt="" class="seta-indicativa seta-5">
+
+            <div id="seletor-de-cota">
+              <p class="lexend-text">Qual é a cota do projeto?</p>
+              <input type="number" id="cota-projeto" name="cota-projeto" step="0.01" placeholder="0.00"
+                onchange="adicionarCota(Number(this.value))">
+            </div>
+
+
+
+          </aside>
+
+          <div class="terreno-central">
+            <h1 class="teko-title page-main-title">MOSTRA AÍ COMO É<br>O TEU TERRENO</h1>
+            <button class="btn-plus">
+              <img src="../img/Button Plus.svg" alt="Adicionar Ponto">
+            </button>
+            <div class="tabela-container-terreno">
+              <div class="scrollable-table">
+
+                <table id="input-table">
+                  <tbody>
+
+                    <!-- As linhas de exemplo foram mantidas, mas o JS vai gerenciar/atualizar Px dinamicamente -->
+                    <tr id="pontoLinha">
+                      <td class="ponto-label-cell">
+                        <div class="ponto-marker">
+                          <h1>P1</h1>
+                        </div>
+                      </td>
+                      <td><span class="input-label teko-eixo">X</span><input type="number" value="40" step="0.01"
+                          name="ponto_x_1" class="input-coordenada"></td>
+                      <td><span class="input-label teko-eixo">Y</span><input type="number" value="0" step="0.01"
+                          name="ponto_y_1" class="input-coordenada"></td>
+                      <td><span class="input-label teko-eixo">Z</span><input type="number" value="101" step="0.01"
+                          name="ponto_z_1" class="input-coordenada"></td>
+                      <td class="lixeira-cell"><button class="btn-lixeira"><img src="../img/Lixo.svg"
+                            alt="Remover"></button></td>
+                    </tr>
+
+                    <tr id="pontoLinha">
+                      <td class="ponto-label-cell">
+                        <div class="ponto-marker">
+                          <h1>P1</h1>
+                        </div>
+                      </td>
+                      <td><span class="input-label teko-eixo">X</span><input type="number" value="30" step="0.01"
+                          name="ponto_x_1" class="input-coordenada"></td>
+                      <td><span class="input-label teko-eixo">Y</span><input type="number" value="0" step="0.01"
+                          name="ponto_y_1" class="input-coordenada"></td>
+                      <td><span class="input-label teko-eixo">Z</span><input type="number" value="101" step="0.01"
+                          name="ponto_z_1" class="input-coordenada"></td>
+                      <td class="lixeira-cell"><button class="btn-lixeira"><img src="../img/Lixo.svg"
+                            alt="Remover"></button></td>
+                    </tr>
+
+                    <tr id="pontoLinha">
+                      <td class="ponto-label-cell">
+                        <div class="ponto-marker">
+                          <h1>P1</h1>
+                        </div>
+                      </td>
+                      <td><span class="input-label teko-eixo">X</span><input type="number" value="20" step="0.01"
+                          name="ponto_x_1" class="input-coordenada"></td>
+                      <td><span class="input-label teko-eixo">Y</span><input type="number" value="0" step="0.01"
+                          name="ponto_y_1" class="input-coordenada"></td>
+                      <td><span class="input-label teko-eixo">Z</span><input type="number" value="101" step="0.01"
+                          name="ponto_z_1" class="input-coordenada"></td>
+                      <td class="lixeira-cell"><button class="btn-lixeira"><img src="../img/Lixo.svg"
+                            alt="Remover"></button></td>
+                    </tr>
+
+                    <tr id="pontoLinha">
+                      <td class="ponto-label-cell">
+                        <div class="ponto-marker">
+                          <h1>P1</h1>
+                        </div>
+                      </td>
+                      <td><span class="input-label teko-eixo">X</span><input type="number" value="10" step="0.01"
+                          name="ponto_x_1" class="input-coordenada"></td>
+                      <td><span class="input-label teko-eixo">Y</span><input type="number" value="0" step="0.01"
+                          name="ponto_y_1" class="input-coordenada"></td>
+                      <td><span class="input-label teko-eixo">Z</span><input type="number" value="101" step="0.01"
+                          name="ponto_z_1" class="input-coordenada"></td>
+                      <td class="lixeira-cell"><button class="btn-lixeira"><img src="../img/Lixo.svg"
+                            alt="Remover"></button></td>
+                    </tr>
+
+                    <tr id="pontoLinha">
+                      <td class="ponto-label-cell">
+                        <div class="ponto-marker">
+                          <h1>P1</h1>
+                        </div>
+                      </td>
+                      <td><span class="input-label teko-eixo">X</span><input type="number" value="0" step="0.01"
+                          name="ponto_x_1" class="input-coordenada"></td>
+                      <td><span class="input-label teko-eixo">Y</span><input type="number" value="0" step="0.01"
+                          name="ponto_y_1" class="input-coordenada"></td>
+                      <td><span class="input-label teko-eixo">Z</span><input type="number" value="101" step="0.01"
+                          name="ponto_z_1" class="input-coordenada"></td>
+                      <td class="lixeira-cell"><button class="btn-lixeira"><img src="../img/Lixo.svg"
+                            alt="Remover"></button></td>
+                    </tr>
+
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="terreno-finalizar">
+              <p class="lexend-text">Já terminou aí? Então...</p>
+              <img src="../img/Seta 6.svg" alt="" class="seta-indicativa seta-6">
+              <button class="btn-planit"><img src="../img/Button PLAN IT.svg" alt="PLAN IT!"
+                  onclick="gerarGrafico()"></button>
+            </div>
+
+          </div>
+
+          <aside class="terreno-lateral-dir">
+            <!--<img src="../img/Seta 2.svg" alt="" class="seta-indicativa seta-2">-->
+
+            <p class="lexend-text">Quer preencher tudo primeiro e enviar depois? Use nossa planilha:</p>
+
+            <button class="btn-download-planilha" onclick="exportarXLSX()"><img
+                src="../img/Download Default Planilha.svg" alt="Download Default Planilha"></button>
+
+            <p class="lexend-text">Depois que preencher é só enviar aqui:</p>
+
+            <!--<img src="../img/Seta 3.svg" alt="" class="seta-indicativa seta-3">-->
+            <div id="dropzoneAside"> <!-- ID RENOMEADO AQUI -->
+              <button class="btn-upload-planilha">
+                <input type="file" id="fileInputAside" style="display:none"> <!-- ID RENOMEADO AQUI -->
+                <img src="../img/Upload Default Planilha.svg" alt="Upload Default Planilha">
+              </button>
+            </div>
+          </aside>
+
+        </div>
+
+      </section>
+      <section id="Grafico" class="tab-content">
+        <div class="grafico-nav-container">
+          <div class="grafico-nav-item">
+            <div class="grafico-nav-text">
+            </div>
+          </div>
+          <div class="grafico-nav-item">
+            <div class="grafico-nav-text">
+            </div>
+          </div>
+        </div>
+        <div id="grafico-azul">
+          <h1 class="teko-title section-title">VISUALIZAÇÃO DO TERRENO</h1>
+          <div class="grafico-container">
+            <div class="grafico-principal">
+              <div id="plot">
+
+                <!--<img src="../img/Logotipo Abreviado.svg" alt="P!" class="plot-logo-abrev">-->
+              </div>
+              <div id="menu-visualizacao">
+                <!-- `onclick` para chamar muda() com o tipo e consequentemente gerarGrafico() -->
+                <button onclick="muda(1)"><img src="../img/Button Planta Baixa.svg" alt="Planta Baixa"></button>
+                <button onclick="muda(2)"><img src="../img/Button Planta Lateral.svg" alt="Planta Lateral"></button>
+                <button onclick="muda(3)"><img src="../img/Button 3D.svg" alt="Visualização 3D"></button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="grafico-nav-container">
+          <div class="grafico-nav-item grafico-nav-item-direita">
+            <!--<img src="../img/Seta 8.svg" alt="" class="seta-indicativa seta-8">-->
+          </div>
+        </div>
+      </section>
+      <section id="Resultados" class="tab-content">
+        <h1 class="teko-title section-title">PLANILHA DE RESULTADOS</h1>
+        <div class="resultados-container">
+          <div class="resultados-principal">
+            <div class="tabela-container-resultados"><!--scrollable-table-->
+              <table id="resultados-tabela-principal"> <!-- ID ADICIONADO AQUI -->
+                <thead>
+                  <tr>
+                    <th>PONTO</th>
+                    <th>X</th>
+                    <th>Y</th>
+                    <th>Z</th>
+                    <th>COTA PROJETO</th>
+                    <th>DIFERENÇA</th>
+                    <th>CORTE (m³)</th>
+                    <th>ATERRO (m³)</th>
+                  </tr>
+                </thead>
+                <tbody id="resultados-tbody"> <!-- ID ADICIONADO AQUI -->
+                  <!-- Conteúdo será preenchido dinamicamente pelo JavaScript -->
+                  <tr>
+                    <td>P1</td>
+                    <td>n</td>
+                    <td>n</td>
+                    <td>n</td>
+                    <td>n</td>
+                    <td>n</td>
+                    <td>n</td>
+                    <td>n</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="totais-container">
+              <h2 class="teko-title">TOTAIS</h2>
+              <div class="totais-valores">
+                <div>
+                  <p class="lexend-text">CORTE (m³)</p>
+                  <p class="lexend-text valor-total">n</p> <!-- Conteúdo atualizado pelo JS -->
+                </div>
+                <div>
+                  <p class="lexend-text">ATERRO (m³)</p>
+                  <p class="lexend-text valor-total">n</p> <!-- Conteúdo atualizado pelo JS -->
+                </div>
+              </div>
+            </div>
+          </div>
+          <aside class="resultados-lateral">
+            <p class="lexend-text">Resolvido. Agora salva isso aí em um relatório PDF. Aqui ó</p>
+            <!--<img src="../img/Seta 9.svg" alt="" class="seta-indicativa seta-9">-->
+            <button class="btn-download-pdf" onclick="imprimirPDF()"> <!-- onclick ADICIONADO AQUI -->
+              <img src="../img/Download PDF.svg" alt="Download PDF">
+            </button>
+            <p class="lexend-text">Ou se preferir salve em uma tabela editável.</p>
+            <button class="btn-download-pdf" onclick="exportTable()"> <!-- onclick ADICIONADO AQUI -->
+              <img src="../img/Download Default Planilha.svg" alt="Download PDF">
+            </button>
+          </aside>
+        </div>
+        <p class="lexend-text precisao-drama">Precisão sem drama. Só não conta pro seu chefe.</p>
+      </section>
+    </div>
+  </main>
+  <footer>
+    <div class="footer-links-container">
+      <a href="#" class="footer-link">FAQ</a>
+      <a href="https://github.com/FeehZera/Calculo_Topografico#autores" class="footer-link">Equipe</a>
+      <a href="https://github.com/FeehZera/Calculo_Topografico" class="footer-link">GitHub</a>
+    </div>
+    <img src="../img/Logotipo B.svg" alt="Logotipo PLAN IT!" class="footer-logo">
+  </footer>
+  
+  <script src="../scripts/main.js"></script>
+  <script src="../scripts/script.js"></script>
 </body>
 
 </html>
