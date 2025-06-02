@@ -224,7 +224,7 @@ function adicionarCota(value) {
 }
 
 //===============================================================================================
-let tipoGrafico = 1;
+let tipoGrafico = 3;
 function muda(tipo) {
     tipoGrafico = tipo;
     const linhasTabelaInput = document.querySelectorAll("#input-table tbody tr");
@@ -317,11 +317,11 @@ function gerarGrafico() {
         showscale: false
     };
 
-    if (tipoGrafico == 1) {
+    if (tipoGrafico == 3) {
         gerarMesh3d(x, y, z, plano);
     } else if (tipoGrafico == 2) {
         density2d(x, y, z);
-    } else if (tipoGrafico == 3) {
+    } else if (tipoGrafico == 1) {
         gerarHeatmap(x, y, z);
     }
 
