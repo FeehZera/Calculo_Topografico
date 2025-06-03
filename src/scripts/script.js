@@ -141,69 +141,82 @@ function processarArquivo(file) {
 //===============================================================================================
 
 async function exportarXLSX() {
-    const qtdInput = document.getElementById('quantos-pontos');
-    let qtd = 0;
-    if (qtdInput && qtdInput.value) {
-        qtd = Number(qtdInput.value);
+    let npontos = 0;
+    npontos = document.getElementById('quantos-pontos').value;
+    let confirmacao = false;
+    if (npontos > 0) {
+        //ok
+        confirmacao = confirm("Exportando tabela de pontos com a quantidade definida anteriormente: " + npontos + ". Deseja continuar?")
     } else {
-        const linhasTabelaInput = document.querySelectorAll("#input-table tbody tr");
-        qtd = linhasTabelaInput.length;
-    }
-
-    if (qtd === 0) {
-        mostrarErro("Não há pontos na tabela de entrada para exportar. Insira a quantidade de pontos ou preencha a tabela.");
+        //errado
+        alert("Por favor, defina a quantidade de pontos a serem exportados.");
         return;
     }
+    if (confirmacao) {
+        const qtdInput = document.getElementById('quantos-pontos');
+        let qtd = 0;
+        if (qtdInput && qtdInput.value) {
+            qtd = Number(qtdInput.value);
+        } else {
+            const linhasTabelaInput = document.querySelectorAll("#input-table tbody tr");
+            qtd = linhasTabelaInput.length;
+        }
 
-    const workbook = new ExcelJS.Workbook();
-    const worksheet = workbook.addWorksheet('Pontos');
+        if (qtd === 0) {
+            mostrarErro("Não há pontos na tabela de entrada para exportar. Insira a quantidade de pontos ou preencha a tabela.");
+            return;
+        }
 
-    // Cabeçalho
-    worksheet.addRow(['Ponto', 'Eixo X', 'Eixo Y', 'Eixo Z']);
+        const workbook = new ExcelJS.Workbook();
+        const worksheet = workbook.addWorksheet('Pontos');
 
-    // Linhas de pontos
-    for (let i = 1; i <= qtd; i++) {
-        worksheet.addRow(['P' + i, '', '', '']);
+        // Cabeçalho
+        worksheet.addRow(['Ponto', 'Eixo X', 'Eixo Y', 'Eixo Z']);
+
+        // Linhas de pontos
+        for (let i = 1; i <= qtd; i++) {
+            worksheet.addRow(['P' + i, '', '', '']);
+        }
+
+        // Centralizar tudo + cabeçalho em negrito
+        worksheet.eachRow((row, rowNumber) => {
+            row.eachCell((cell) => {
+                cell.alignment = { vertical: 'middle', horizontal: 'center' };
+                if (rowNumber === 1) {
+                    cell.font = { bold: true };
+                }
+                cell.border = {
+                    top: { style: 'thin' },
+                    left: { style: 'thin' },
+                    bottom: { style: 'thin' },
+                    right: { style: 'thin' }
+                };
+            });
+        });
+
+        // Ajuste de largura automática
+        worksheet.columns.forEach(column => {
+            let maxLength = 10;
+            column.eachCell({ includeEmpty: true }, cell => {
+                const value = cell.value ? cell.value.toString() : "";
+                if (value.length > maxLength) {
+                    maxLength = value.length;
+                }
+            });
+            column.width = maxLength + 2;
+        });
+
+        const buffer = await workbook.xlsx.writeBuffer();
+        const blob = new Blob([buffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+        const url = URL.createObjectURL(blob);
+
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "tabela_de_pontos.xlsx";
+        a.click();
+
+        URL.revokeObjectURL(url);
     }
-
-    // Centralizar tudo + cabeçalho em negrito
-    worksheet.eachRow((row, rowNumber) => {
-        row.eachCell((cell) => {
-            cell.alignment = { vertical: 'middle', horizontal: 'center' };
-            if (rowNumber === 1) {
-                cell.font = { bold: true };
-            }
-            cell.border = {
-                top: { style: 'thin' },
-                left: { style: 'thin' },
-                bottom: { style: 'thin' },
-                right: { style: 'thin' }
-            };
-        });
-    });
-
-    // Ajuste de largura automática
-    worksheet.columns.forEach(column => {
-        let maxLength = 10;
-        column.eachCell({ includeEmpty: true }, cell => {
-            const value = cell.value ? cell.value.toString() : "";
-            if (value.length > maxLength) {
-                maxLength = value.length;
-            }
-        });
-        column.width = maxLength + 2;
-    });
-
-    const buffer = await workbook.xlsx.writeBuffer();
-    const blob = new Blob([buffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
-    const url = URL.createObjectURL(blob);
-
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "tabela_de_pontos.xlsx";
-    a.click();
-
-    URL.revokeObjectURL(url);
 }
 //===============================================================================================
 
